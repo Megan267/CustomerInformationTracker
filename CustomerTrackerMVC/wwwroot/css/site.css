@@ -508,15 +508,13 @@ code {
         color: var(--accent-soft);
     }
 
-    .icon-btn.icon-btn-warn {
-        border-color: rgba(242, 121, 92, 0.45);
+    /* Delete stays neutral until hovered, so a full page isn't a wall of red buttons. */
+    .icon-btn.icon-btn-warn:hover,
+    .icon-btn.icon-btn-warn:focus-visible {
+        border-color: var(--warn);
+        background: rgba(242, 121, 92, 0.08);
         color: var(--warn);
     }
-
-        .icon-btn.icon-btn-warn:hover {
-            border-color: var(--warn);
-            background: rgba(242, 121, 92, 0.08);
-        }
 
 .inline-form {
     display: inline;
@@ -532,7 +530,13 @@ code {
     border-radius: 8px;
     font-size: 12.5px;
     animation: notice-in 0.2s ease-out;
+    transition: opacity 0.4s ease, transform 0.4s ease;
 }
+
+    .notice.is-leaving {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
 
     .notice > svg {
         width: 16px;
@@ -786,11 +790,11 @@ code {
 }
 
     .data-table .col-name {
-        width: 15%;
+        width: 14%;
     }
 
     .data-table .col-address {
-        width: 18%;
+        width: 22%;
     }
 
     .data-table .col-phone {
@@ -802,7 +806,7 @@ code {
     }
 
     .data-table .col-email {
-        width: 21%;
+        width: 20%;
     }
 
     .data-table .col-vat {
@@ -815,7 +819,7 @@ code {
 
     .data-table th {
         white-space: nowrap;
-        padding: 8px;
+        padding: 8px 12px 8px 8px;
         border-bottom: 1px solid var(--line-soft);
         color: var(--text-mute);
         font-weight: 400;
@@ -855,11 +859,17 @@ code {
     }
 
 .sort-arrow {
-    font-size: 9px;
-    opacity: 0.55;
+    font-size: 11px;
+    line-height: 1;
+    opacity: 0.4;
+}
+
+.sort-link:hover .sort-arrow {
+    opacity: 0.8;
 }
 
 .sort-link.is-sorted .sort-arrow {
+    font-size: 9px;
     opacity: 1;
 }
 
@@ -1422,6 +1432,106 @@ code {
     .table-card {
         padding: 14px;
     }
+
+    .table-scroll {
+        overflow-x: visible;
+    }
+
+    .data-table,
+    .data-table tbody,
+    .data-table tr,
+    .data-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .data-table {
+        min-width: 0;
+        table-layout: auto;
+    }
+
+        .data-table colgroup {
+            display: none;
+        }
+
+        .data-table thead {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+            .data-table thead tr {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+        .data-table th {
+            padding: 0;
+            border: 0;
+        }
+
+            .data-table th.actions-cell {
+                display: none;
+            }
+
+            .data-table th .sort-link {
+                padding: 5px 10px;
+                border: 1px solid var(--line-strong);
+                border-radius: 999px;
+                font-size: 11.5px;
+            }
+
+                .data-table th .sort-link.is-sorted {
+                    border-color: var(--accent);
+                }
+
+        .data-table tbody tr {
+            margin-bottom: 10px;
+            padding: 12px 14px;
+            border: 1px solid var(--line-soft);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.015);
+        }
+
+            .data-table tbody tr:hover td {
+                background: none;
+            }
+
+        .data-table td {
+            display: flex;
+            gap: 12px;
+            padding: 6px 0;
+            border-bottom: 1px solid #16161f;
+        }
+
+            .data-table td[data-label]::before {
+                content: attr(data-label);
+                flex: 0 0 104px;
+                color: var(--text-mute);
+            }
+
+            .data-table td > * {
+                min-width: 0;
+            }
+
+            .data-table td.cell-title {
+                display: block;
+                padding-top: 0;
+            }
+
+            .data-table td.actions-cell {
+                justify-content: flex-end;
+                padding: 10px 0 0;
+                border-bottom: 0;
+            }
+
+            .data-table td.empty-state {
+                display: block;
+            }
+
+    .cell-nowrap {
+        white-space: normal;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1431,4 +1541,12 @@ code {
     .notice {
         animation: none;
     }
+
+    .notice {
+        transition: opacity 0.4s ease;
+    }
+
+        .notice.is-leaving {
+            transform: none;
+        }
 }

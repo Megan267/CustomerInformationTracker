@@ -36,7 +36,7 @@ namespace CustomerTrackerMVC.Controllers
                     ?? new CustomerPage();
                 query.Page = customers.Page;
             }
-            catch (HttpRequestException)
+            catch (Exception ex) when (IsApiUnavailable(ex))
             {
                 ViewData["ApiError"] = "Unable to load customers. Make sure the API is running.";
             }
@@ -62,7 +62,16 @@ namespace CustomerTrackerMVC.Controllers
             }
 
             var apiClient = _httpClientFactory.CreateClient("ApiClient");
-            var response = await apiClient.GetAsync($"/api/customer/{id}");
+            HttpResponseMessage response;
+            try
+            {
+                response = await apiClient.GetAsync($"/api/customer/{id}");
+            }
+            catch (Exception ex) when (IsApiUnavailable(ex))
+            {
+                TempData["ErrorMessage"] = ApiUnavailableMessage;
+                return Redirect(BackToList(returnUrl));
+            }
 
             if (!response.IsSuccessStatusCode)
             {
@@ -104,9 +113,18 @@ namespace CustomerTrackerMVC.Controllers
             };
 
             bool isNew = customer.CustomerId == 0;
-            var response = isNew
-                ? await apiClient.PostAsJsonAsync("/api/customer", dto)
-                : await apiClient.PutAsJsonAsync($"/api/customer/{customer.CustomerId}", dto);
+            HttpResponseMessage response;
+            try
+            {
+                response = isNew
+                    ? await apiClient.PostAsJsonAsync("/api/customer", dto)
+                    : await apiClient.PutAsJsonAsync($"/api/customer/{customer.CustomerId}", dto);
+            }
+            catch (Exception ex) when (IsApiUnavailable(ex))
+            {
+                ModelState.AddModelError(string.Empty, ApiUnavailableMessage);
+                return View(customer);
+            }
 
             if (response.IsSuccessStatusCode)
             {
@@ -147,10 +165,24 @@ namespace CustomerTrackerMVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id, string? customerName, string? returnUrl)
+        public async Task<IActionResult> Delete(int id, string? customerName, string? returnUrl, bool confirmed = false)
         {
+            if (!confirmed)
+            {
+                return RedirectToAction(nameof(ConfirmDelete), new { id, returnUrl });
+            }
+
             var apiClient = _httpClientFactory.CreateClient("ApiClient");
-            var response = await apiClient.DeleteAsync($"/api/customer/{id}");
+            HttpResponseMessage response;
+            try
+            {
+                response = await apiClient.DeleteAsync($"/api/customer/{id}");
+            }
+            catch (Exception ex) when (IsApiUnavailable(ex))
+            {
+                TempData["ErrorMessage"] = ApiUnavailableMessage;
+                return Redirect(BackToList(returnUrl));
+            }
 
             if (response.IsSuccessStatusCode)
             {
@@ -166,12 +198,48 @@ namespace CustomerTrackerMVC.Controllers
             return Redirect(BackToList(returnUrl));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ConfirmDelete(int id, string? returnUrl)
+        {
+            ViewData["ReturnUrl"] = BackToList(returnUrl);
+
+            var apiClient = _httpClientFactory.CreateClient("ApiClient");
+            HttpResponseMessage response;
+            try
+            {
+                response = await apiClient.GetAsync($"/api/customer/{id}");
+            }
+            catch (Exception ex) when (IsApiUnavailable(ex))
+            {
+                TempData["ErrorMessage"] = ApiUnavailableMessage;
+                return Redirect(BackToList(returnUrl));
+            }
+
+            if (!response.IsSuccessStatusCode)
+            {
+                TempData["ErrorMessage"] = "Customer not found. It may already have been deleted.";
+                return Redirect(BackToList(returnUrl));
+            }
+
+            var customer = await response.Content.ReadFromJsonAsync<Customer>();
+            return View(customer);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Reinstate(int id, string? customerName, string? returnUrl)
         {
             var apiClient = _httpClientFactory.CreateClient("ApiClient");
-            var response = await apiClient.PostAsync($"/api/customer/{id}/reinstate", null);
+            HttpResponseMessage response;
+            try
+            {
+                response = await apiClient.PostAsync($"/api/customer/{id}/reinstate", null);
+            }
+            catch (Exception ex) when (IsApiUnavailable(ex))
+            {
+                TempData["ErrorMessage"] = ApiUnavailableMessage;
+                return Redirect(BackToList(returnUrl));
+            }
 
             if (response.IsSuccessStatusCode)
             {
@@ -189,6 +257,13 @@ namespace CustomerTrackerMVC.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private const string ApiUnavailableMessage = "The customer service could not be reached. Make sure the API is running and try again.";
+
+        private static bool IsApiUnavailable(Exception ex)
+        {
+            return ex is HttpRequestException or TaskCanceledException or System.Text.Json.JsonException;
         }
 
         private string BackToList(string? returnUrl)

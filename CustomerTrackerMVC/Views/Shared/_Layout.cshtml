@@ -4,7 +4,17 @@
     var onList = controller == "Customers" && action == "Index";
     var onManage = controller == "Customers" && action == "Manage";
 
-    var hour = DateTime.Now.Hour;
+    // Use South African time rather than the server clock (Azure runs on UTC).
+    DateTime now;
+    try
+    {
+        now = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, "Africa/Johannesburg");
+    }
+    catch (TimeZoneNotFoundException)
+    {
+        now = DateTime.UtcNow.AddHours(2); // SAST is UTC+2 all year, with no daylight saving
+    }
+    var hour = now.Hour;
     var greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
 }
 <!DOCTYPE html>
@@ -35,7 +45,7 @@
             <div class="sidebar-welcome">
                 <h2>Welcome</h2>
                 <p>@greeting</p>
-                <p class="sidebar-date">@DateTime.Now.ToString("dddd, d MMMM")</p>
+                <p class="sidebar-date">@now.ToString("dddd, d MMMM")</p>
             </div>
 
             <nav class="sidebar-nav">

@@ -1,0 +1,42 @@
+﻿@model Customer
+@{
+    ViewData["Title"] = "Delete customer";
+    ViewData["Tab"] = "Delete customer";
+    var returnUrl = ViewData["ReturnUrl"] as string ?? Url.Action("Index");
+}
+
+<div class="manage-page">
+    <div class="page-header page-header-center">
+        <div>
+            <h1>Delete customer</h1>
+            <p>Please confirm before this customer is deleted.</p>
+        </div>
+    </div>
+
+    <div class="form-grid">
+        <section class="form-card">
+            <div class="form-card-top"></div>
+            <div class="form-card-inner">
+                <div class="confirm">
+                    <div class="confirm-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01" /><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" /></svg>
+                    </div>
+                    <div class="confirm-content">
+                        <p class="confirm-message">Are you sure you want to delete <strong>@Model.Name</strong>?</p>
+                        <div class="confirm-warning"><strong>The customer will be moved to Inactive customers</strong>, where you can restore them at any time.</div>
+                    </div>
+                </div>
+
+                <form method="post" asp-action="Delete" asp-route-id="@Model.CustomerId">
+                    <input type="hidden" name="customerName" value="@Model.Name" />
+                    <input type="hidden" name="returnUrl" value="@returnUrl" />
+                    <input type="hidden" name="confirmed" value="true" />
+                    <div class="form-actions">
+                        <a class="btn-secondary" href="@returnUrl">Cancel</a>
+                        <button type="submit" class="btn-danger">Delete customer</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+</div>

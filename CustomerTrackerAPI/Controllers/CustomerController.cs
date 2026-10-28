@@ -4,6 +4,7 @@ using CustomerTrackerAPI.Mappings;
 using CustomerTrackerAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace CustomerTrackerAPI.Controllers
 {
@@ -128,9 +129,6 @@ namespace CustomerTrackerAPI.Controllers
             return NoContent();
         }
 
-        /// <summary>
-        /// Reinstates a deleted customer by setting its IsActive property to true.
-        /// </summary>
         [HttpPost("{id:int}/reinstate")]
         public async Task<IActionResult> ReinstateCustomer(int id)
         {
@@ -155,20 +153,40 @@ namespace CustomerTrackerAPI.Controllers
 
             IOrderedQueryable<Customer> sorted = (sortBy?.Trim().ToLowerInvariant()) switch
             {
-                "street" => desc ? customers.OrderByDescending(c => c.Address!.Street) : customers.OrderBy(c => c.Address!.Street),
-                "city" => desc ? customers.OrderByDescending(c => c.Address!.City) : customers.OrderBy(c => c.Address!.City),
-                "province" => desc ? customers.OrderByDescending(c => c.Address!.Province) : customers.OrderBy(c => c.Address!.Province),
-                "postalcode" => desc ? customers.OrderByDescending(c => c.Address!.PostalCode) : customers.OrderBy(c => c.Address!.PostalCode),
-                "country" => desc ? customers.OrderByDescending(c => c.Address!.Country) : customers.OrderBy(c => c.Address!.Country),
-                "telephonenumber" => desc ? customers.OrderByDescending(c => c.TelephoneNumber) : customers.OrderBy(c => c.TelephoneNumber),
-                "contactpersonname" => desc ? customers.OrderByDescending(c => c.ContactPersonName) : customers.OrderBy(c => c.ContactPersonName),
-                "contactpersonemail" => desc ? customers.OrderByDescending(c => c.ContactPersonEmail) : customers.OrderBy(c => c.ContactPersonEmail),
-                "vatnumber" => desc ? customers.OrderByDescending(c => c.VatNumber) : customers.OrderBy(c => c.VatNumber),
-                "createdat" => desc ? customers.OrderByDescending(c => c.CreatedAt) : customers.OrderBy(c => c.CreatedAt),
-                _ => desc ? customers.OrderByDescending(c => c.Name) : customers.OrderBy(c => c.Name),
+                "street" => By(customers, c => c.Address!.Street, desc),
+                "city" => desc
+                    ? By(customers, c => c.Address!.City, desc).ThenByDescending(c => c.Address!.Street)
+                    : By(customers, c => c.Address!.City, desc).ThenBy(c => c.Address!.Street),
+                "province" => NullsLast(customers, c => c.Address!.Province, desc),
+                "postalcode" => By(customers, c => c.Address!.PostalCode, desc),
+                "country" => By(customers, c => c.Address!.Country, desc),
+                "telephonenumber" => NullsLast(customers, c => c.TelephoneNumber == null ? null : c.TelephoneNumber
+                    .Replace(" ", "").Replace("-", "").Replace("(", "").Replace(")", "").Replace("+27", "0"), desc),
+                "contactpersonname" => NullsLast(customers, c => c.ContactPersonName, desc),
+                "contactpersonemail" => NullsLast(customers, c => c.ContactPersonEmail, desc),
+                "vatnumber" => NullsLast(customers, c => c.VatNumber, desc),
+                "createdat" => By(customers, c => c.CreatedAt, desc),
+                _ => By(customers, c => c.Name, desc),
             };
 
             return sorted.ThenBy(c => c.CustomerId);
+        }
+
+        private static IOrderedQueryable<Customer> By<TKey>(
+            IQueryable<Customer> customers, Expression<Func<Customer, TKey>> key, bool desc)
+        {
+            return desc ? customers.OrderByDescending(key) : customers.OrderBy(key);
+        }
+
+        private static IOrderedQueryable<Customer> NullsLast(
+            IQueryable<Customer> customers, Expression<Func<Customer, string?>> key, bool desc)
+        {
+            var isNull = Expression.Lambda<Func<Customer, bool>>(
+                Expression.Equal(key.Body, Expression.Constant(null, typeof(string))),
+                key.Parameters);
+
+            var withValuesFirst = customers.OrderBy(isNull);
+            return desc ? withValuesFirst.ThenByDescending(key) : withValuesFirst.ThenBy(key);
         }
     }
 }

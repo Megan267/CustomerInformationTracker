@@ -2,10 +2,6 @@
 
 namespace CustomerTrackerAPI.DTOs
 {
-    /// <summary>
-    /// What a client sends to create or update a customer.
-    /// Validation lives here (not on the entity) because this is what [ApiController] validates.
-    /// </summary>
     public class CustomerRequest
     {
         [Required(ErrorMessage = "Please enter the customer's name.")]
@@ -25,6 +21,8 @@ namespace CustomerTrackerAPI.DTOs
 
         [StringLength(100, ErrorMessage = "The email address can be at most {1} characters.")]
         [EmailAddress(ErrorMessage = "Enter a valid email address, e.g. name@gmail.com")]
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+            ErrorMessage = "Enter a valid email address, e.g. name@gmail.com")]
         public string? ContactPersonEmail { get; set; }
 
         [StringLength(20, ErrorMessage = "The VAT number can be at most {1} characters.")]

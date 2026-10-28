@@ -21,10 +21,46 @@
         el.addEventListener('click', function () { setSidebar(false); });
     });
 
-    document.querySelectorAll('[data-dismissible] .notice-dismiss').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            btn.closest('[data-dismissible]').remove();
-        });
+    function fadeOut(notice) {
+        if (!notice || notice.classList.contains('is-leaving')) {
+            return;
+        }
+        notice.classList.add('is-leaving');
+        var removed = false;
+        function remove() {
+            if (!removed) {
+                removed = true;
+                notice.remove();
+            }
+        }
+        notice.addEventListener('transitionend', remove);
+        setTimeout(remove, 600);
+    }
+
+    document.querySelectorAll('[data-dismissible]').forEach(function (notice) {
+        var btn = notice.querySelector('.notice-dismiss');
+        if (btn) {
+            btn.addEventListener('click', function () { fadeOut(notice); });
+        }
+
+        // Success messages fade on their own. Errors stay until closed.
+        if (!notice.classList.contains('notice-success')) {
+            return;
+        }
+
+        // Give longer when there's an Undo button, and pause while the mouse or keyboard is on it.
+        var delay = notice.querySelector('.notice-action') ? 10000 : 5000;
+        var timer = setTimeout(function () { fadeOut(notice); }, delay);
+
+        function pause() { clearTimeout(timer); }
+        function resume() {
+            clearTimeout(timer);
+            timer = setTimeout(function () { fadeOut(notice); }, 3000);
+        }
+        notice.addEventListener('mouseenter', pause);
+        notice.addEventListener('mouseleave', resume);
+        notice.addEventListener('focusin', pause);
+        notice.addEventListener('focusout', resume);
     });
 
     var filterForm = document.querySelector('form[data-live-filter]');
@@ -207,6 +243,10 @@
         }
         var form = pendingForm;
         form.dataset.confirmed = 'true';
+        var confirmedInput = form.querySelector('[data-confirmed-input]');
+        if (confirmedInput) {
+            confirmedInput.value = 'true';
+        }
         confirmBtn.disabled = true;
         confirmBtn.textContent = 'Deleting…';
         form.submit();
