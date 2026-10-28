@@ -30,7 +30,7 @@ namespace CustomerTrackerAPI.Models
         [Required]
         [EmailAddress(ErrorMessage = "Enter a valid email address, e.g. name@gmail.com")]
         [StringLength(100, ErrorMessage = "The email address can be at most {1} characters.")]
-        [RegularExpression(@"/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i", ErrorMessage = "Enter a valid email address e.g. name@gmail.com")]
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Enter a valid email address e.g. name@gmail.com")]
         [Display(Name = "Email Address")]
         public string? email { get; set; } = string.Empty;
 
