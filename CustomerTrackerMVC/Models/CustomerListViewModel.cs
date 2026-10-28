@@ -1,6 +1,5 @@
 namespace CustomerTrackerMVC.Models
 {
-    /// <summary>Everything the customer list page and its results partial need.</summary>
     public class CustomerListViewModel
     {
         public CustomerListViewModel(CustomerListQuery query, CustomerPage result)
@@ -14,6 +13,7 @@ namespace CustomerTrackerMVC.Models
         public CustomerPage Result { get; }
 
         public string CountText =>
-            $"{Result.TotalCount} {(Result.TotalCount == 1 ? "customer" : "customers")}{(Query.HasFilter ? " match" : "")}";
+            $"{Result.TotalCount} {(Query.Status == CustomerStatusFilter.Inactive ? "inactive " : "")}" +
+            $"{(Result.TotalCount == 1 ? "customer" : "customers")}{(Query.HasSearch ? " match" : "")}";
     }
 }

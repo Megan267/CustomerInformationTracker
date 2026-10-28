@@ -27,9 +27,16 @@ namespace CustomerTrackerAPI.Controllers
                 .AsNoTracking()
                 .Include(c => c.Address);
 
-            if (query.IncludeDeleted)
+            string status = query.Status?.Trim().ToLowerInvariant() ?? "active";
+
+            if (query.IncludeDeleted || status is "inactive" or "all")
             {
                 customers = customers.IgnoreQueryFilters();
+            }
+
+            if (status == "inactive")
+            {
+                customers = customers.Where(c => !c.IsActive);
             }
 
             if (!string.IsNullOrWhiteSpace(query.Name))

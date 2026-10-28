@@ -36,21 +36,26 @@
         var clearLink = filterForm.querySelector('[data-filter-clear]');
         var status = filterForm.querySelector('[data-filter-status]');
         var countPill = document.querySelector('[data-count-pill]');
+        var statusSelect = filterForm.querySelector('[data-filter-select]');
+        var defaultStatus = 'Active';
 
         function currentQuery() {
             var params = new URLSearchParams();
             new FormData(filterForm).forEach(function (value, key) {
-                if (String(value).trim() !== '') {
-                    params.append(key, String(value).trim());
+                var text = String(value).trim();
+                // the default status is left out so the URL stays clean
+                if (text !== '' && !(key === 'status' && text === defaultStatus)) {
+                    params.append(key, text);
                 }
             });
             return params.toString();
         }
 
         function hasFilter() {
-            return Array.prototype.some.call(filterForm.querySelectorAll('.search-input'), function (input) {
+            var hasText = Array.prototype.some.call(filterForm.querySelectorAll('.search-input'), function (input) {
                 return input.value.trim() !== '';
             });
+            return hasText || (statusSelect !== null && statusSelect.value !== defaultStatus);
         }
 
         function refresh() {
@@ -128,6 +133,16 @@
             input.addEventListener('input', scheduleRefresh);
         });
 
+        if (statusSelect) {
+            statusSelect.addEventListener('change', function () {
+                if (clearLink) {
+                    clearLink.hidden = !hasFilter();
+                }
+                clearTimeout(timer);
+                refresh();
+            });
+        }
+
         filterForm.addEventListener('submit', function (e) {
             e.preventDefault();
             clearTimeout(timer);
@@ -140,6 +155,9 @@
                 filterForm.querySelectorAll('.search-input').forEach(function (input) {
                     input.value = '';
                 });
+                if (statusSelect) {
+                    statusSelect.value = defaultStatus;
+                }
                 clearLink.hidden = true;
                 clearTimeout(timer);
                 refresh();

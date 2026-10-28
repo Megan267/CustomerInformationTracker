@@ -1,9 +1,5 @@
 namespace CustomerTrackerMVC.Models
 {
-    /// <summary>
-    /// The columns the customer list can be sorted by.
-    /// Each name matches a "sortBy" value the API understands.
-    /// </summary>
     public enum CustomerSortField
     {
         Name,
@@ -15,10 +11,13 @@ namespace CustomerTrackerMVC.Models
         CreatedAt
     }
 
-    /// <summary>
-    /// What the customer list page reads from its query string,
-    /// e.g. /Customers?name=acme&amp;vat=401&amp;sort=City&amp;desc=true&amp;page=2
-    /// </summary>
+    public enum CustomerStatusFilter
+    {
+        Active,
+        Inactive,
+        All
+    }
+
     public class CustomerListQuery
     {
         public string? Name { get; set; }
@@ -31,12 +30,15 @@ namespace CustomerTrackerMVC.Models
 
         public int Page { get; set; } = 1;
 
-        public bool HasFilter => !string.IsNullOrWhiteSpace(Name) || !string.IsNullOrWhiteSpace(Vat);
+        public CustomerStatusFilter Status { get; set; } = CustomerStatusFilter.Active;
 
-        /// <summary>
-        /// Builds the query string for GET /api/customer.
-        /// The API uses different parameter names (VatNumber, SortBy, SortDir) to this page.
-        /// </summary>
+        public bool HasSearch => !string.IsNullOrWhiteSpace(Name) || !string.IsNullOrWhiteSpace(Vat);
+
+        public bool HasFilter => HasSearch || Status != CustomerStatusFilter.Active;
+
+        public string? StatusRouteValue => Status == CustomerStatusFilter.Active ? null : Status.ToString();
+
+        
         public string ToApiQueryString()
         {
             var sort = Enum.IsDefined(Sort) ? Sort : CustomerSortField.Name;
@@ -56,6 +58,11 @@ namespace CustomerTrackerMVC.Models
             if (!string.IsNullOrWhiteSpace(Vat))
             {
                 parts.Add("VatNumber=" + Uri.EscapeDataString(Vat.Trim()));
+            }
+
+            if (Status != CustomerStatusFilter.Active && Enum.IsDefined(Status))
+            {
+                parts.Add("Status=" + Status.ToString().ToLowerInvariant());
             }
 
             return string.Join("&", parts);

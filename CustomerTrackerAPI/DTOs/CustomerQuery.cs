@@ -13,5 +13,7 @@
         public int Page { get; set; } = 1;
 
         public bool IncludeDeleted { get; set; }
+
+        public string? Status { get; set; }
     }
 }

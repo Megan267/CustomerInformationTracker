@@ -713,6 +713,64 @@ code {
         outline: none;
     }
 
+.status-wrap {
+    width: 190px;
+    cursor: pointer;
+}
+
+.status-select {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+    .status-select:focus {
+        outline: none;
+    }
+
+    .status-select option {
+        background: var(--surface);
+        color: var(--text);
+    }
+
+.status-tag {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 7px;
+    border: 1px solid rgba(242, 121, 92, 0.35);
+    border-radius: 10px;
+    background: rgba(242, 121, 92, 0.1);
+    color: var(--warn);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    vertical-align: 1px;
+}
+
+.data-table tbody tr.is-inactive td {
+    color: var(--text-mute);
+}
+
+.data-table tbody tr.is-inactive .cell-name {
+    color: var(--text-secondary);
+}
+
+.icon-btn.icon-btn-restore {
+    border-color: rgba(52, 211, 153, 0.45);
+    color: var(--green);
+}
+
+    .icon-btn.icon-btn-restore:hover {
+        border-color: var(--green);
+        background: rgba(52, 211, 153, 0.08);
+    }
+
 .table-scroll {
     width: 100%;
     overflow-x: auto;

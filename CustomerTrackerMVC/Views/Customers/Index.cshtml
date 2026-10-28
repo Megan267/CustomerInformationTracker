@@ -13,7 +13,7 @@
     <div class="page-header">
         <div>
             <h1>Customers</h1>
-            <p>Every customer on record. Filter by name or VAT number, click a column heading to sort, and use the actions on each row to edit or delete.</p>
+            <p>Every customer on record. Filter by name, VAT number or status, click a column heading to sort, and use the actions on each row to edit, delete or reinstate.</p>
         </div>
         <a class="btn-primary" asp-action="Manage" asp-route-returnUrl="@returnUrl" data-return-link>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg>
@@ -57,6 +57,16 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10" /></svg>
                 <span class="visually-hidden">VAT number</span>
                 <input class="search-input" type="search" name="vat" value="@query.Vat" placeholder="Filter by VAT number" autocomplete="off" maxlength="20" />
+            </label>
+
+            <label class="search-wrap status-wrap" title="Filter by status">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18l-7 8v6l-4-2v-4z" /></svg>
+                <span class="visually-hidden">Status</span>
+                <select class="status-select" name="status" data-filter-select>
+                    <option value="Active" selected="@(query.Status == CustomerStatusFilter.Active)">Active customers</option>
+                    <option value="Inactive" selected="@(query.Status == CustomerStatusFilter.Inactive)">Inactive customers</option>
+                    <option value="All" selected="@(query.Status == CustomerStatusFilter.All)">All customers</option>
+                </select>
             </label>
 
             <button type="submit" class="btn-quiet filter-submit">Apply filters</button>
