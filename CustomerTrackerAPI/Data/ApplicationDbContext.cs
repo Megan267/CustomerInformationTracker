@@ -13,7 +13,6 @@ namespace CustomerTrackerAPI.Data
 
         public DbSet<Address> Addresses { get; set; }
 
-        //Configures the model and relationships between entities in the database context.
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -21,19 +20,23 @@ namespace CustomerTrackerAPI.Data
             modelBuilder.Entity<Customer>().ToTable("Customers");
             modelBuilder.Entity<Address>().ToTable("Addresses");
 
-            // Customer -> Address (an address can have many customers, but a customer only has one address)
             modelBuilder.Entity<Customer>()
-                .HasOne(c => c.address)
-                .WithMany()
-                .HasForeignKey(c => c.addressId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(c => c.Address)
+                .WithOne()
+                .HasForeignKey<Address>(a => a.CustomerId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Emails must be unique per customer
             modelBuilder.Entity<Customer>()
-                .HasIndex(c => c.email)
-                .IsUnique();
+                .Property(c => c.CreatedAt)
+                .HasDefaultValueSql("GETDATE()");
+
+            modelBuilder.Entity<Customer>().HasIndex(c => c.Name);
+            modelBuilder.Entity<Customer>().HasIndex(c => c.VatNumber);
+
+            modelBuilder.Entity<Customer>().HasQueryFilter(c => c.IsActive);
         }
     }
 }
+
 // dotnet ef migrations add InitialSetup
 // dotnet ef database update

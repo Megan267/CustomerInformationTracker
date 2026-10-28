@@ -1,48 +1,45 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Net;
 
 namespace CustomerTrackerAPI.Models
 {
     public class Customer
     {
         [Key]
-        [Required]
-        public int clientId { get; set; }
+        public int CustomerId { get; set; }
 
         [Required(ErrorMessage = "Please enter in the customer's name.")]
         [StringLength(200, ErrorMessage = "The name can be at most {1} characters.")]
         [Display(Name = "Name")]
-        public string name { get; set; } = string.Empty;
-
-        public int addressId { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Please enter in the customer's address.")]
         [Display(Name = "Address")]
-        public Address? address { get; set; }
+        public Address? Address { get; set; }
 
         [StringLength(20, ErrorMessage = "The telephone number can be at most {1} characters.")]
-        [RegularExpression(
-           @"^(\+[1-9][\d\s]{7,20}|0\d{2}\s?\d{3}\s?\d{4})$",
-           ErrorMessage = "Enter a valid phone number.")]
+        [RegularExpression(@"^\+?[\d\s\-()]{7,20}$",
+            ErrorMessage = "Enter a valid phone number, e.g. 021 123 4567.")]
         [Display(Name = "Telephone number")]
-        public string? telephoneNumber { get; set; } = string.Empty;
+        public string? TelephoneNumber { get; set; }
 
-        [Required]
-        [EmailAddress(ErrorMessage = "Enter a valid email address, e.g. name@gmail.com")]
+        [StringLength(100, ErrorMessage = "The contact person's name can be at most {1} characters.")]
+        [Display(Name = "Contact person")]
+        public string? ContactPersonName { get; set; }
+
         [StringLength(100, ErrorMessage = "The email address can be at most {1} characters.")]
-        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Enter a valid email address e.g. name@gmail.com")]
-        [Display(Name = "Email Address")]
-        public string? email { get; set; } = string.Empty;
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+            ErrorMessage = "Enter a valid email address, e.g. name@gmail.com")]
+        [Display(Name = "Contact email")]
+        public string? ContactPersonEmail { get; set; }
 
         [StringLength(20, ErrorMessage = "The VAT number can be at most {1} characters.")]
-        [RegularExpression(@"^[A-Za-z0-9\-]+$", ErrorMessage = "The VAT number may only contain letters, digits and dashes.")]
+        [RegularExpression(@"^[A-Za-z]{0,2}[A-Za-z0-9 .\-]{4,18}$",
+        ErrorMessage = "Enter a valid VAT number, e.g. 4123456789 or GB123456789.")]
         [Display(Name = "VAT number")]
-        public string? vatNumber { get; set; } = string.Empty;
+        public string? VatNumber { get; set; }
 
-        [Required]
         public bool IsActive { get; set; } = true;
 
         public DateTime CreatedAt { get; set; }
-
     }
 }
