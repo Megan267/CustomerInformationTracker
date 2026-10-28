@@ -1,0 +1,135 @@
+﻿@model Customer
+@{
+    var isNew = Model.CustomerId == 0;
+    ViewData["Title"] = isNew ? "Add customer" : "Edit customer";
+    ViewData["Tab"] = isNew ? "Add customer" : "Edit customer";
+    var returnUrl = ViewData["ReturnUrl"] as string ?? Url.Action("Index");
+}
+
+<div class="manage-page">
+    <div class="page-header page-header-center">
+        <div>
+            <h1>@(isNew ? "Add a customer" : "Edit customer")</h1>
+            <p>
+                @if (isNew)
+                {
+                    <text>Capture the customer's details. Only the name and address are required.</text>
+                }
+                else
+                {
+                    <text>Update <strong>@Model.Name</strong>'s details and save. Only the name and address are required.</text>
+                }
+            </p>
+        </div>
+    </div>
+
+    <div class="form-grid">
+        <section class="form-card">
+            <div class="form-card-top"></div>
+            <div class="form-card-inner">
+                <div class="form-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4" /><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" /></svg>
+                    Customer details
+                </div>
+
+                <form method="post" asp-action="Manage" novalidate>
+                    <input type="hidden" asp-for="CustomerId" />
+                    <input type="hidden" name="returnUrl" value="@returnUrl" />
+
+                    <div asp-validation-summary="ModelOnly" class="error-list"></div>
+
+                    <div class="field">
+                        <label asp-for="Name">Name <span class="required" aria-hidden="true">*</span></label>
+                        <input asp-for="Name" type="text" placeholder="e.g. Acacia Logistics" autocomplete="organization" autofocus />
+                        <span asp-validation-for="Name" class="field-error"></span>
+                    </div>
+
+                    <div class="form-section-label">Address</div>
+
+                    <span asp-validation-for="Address" class="field-error"></span>
+
+                    <div class="field">
+                        <label asp-for="Address.Street">Street <span class="required" aria-hidden="true">*</span></label>
+                        <input asp-for="Address.Street" type="text" placeholder="e.g. 14 Wierda Road" autocomplete="address-line1" />
+                        <span asp-validation-for="Address.Street" class="field-error"></span>
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field">
+                            <label asp-for="Address.City">City <span class="required" aria-hidden="true">*</span></label>
+                            <input asp-for="Address.City" type="text" placeholder="e.g. Sandton" autocomplete="address-level2" />
+                            <span asp-validation-for="Address.City" class="field-error"></span>
+                        </div>
+                        <div class="field">
+                            <label asp-for="Address.Province"></label>
+                            <input asp-for="Address.Province" type="text" placeholder="e.g. Gauteng" autocomplete="address-level1" />
+                            <span asp-validation-for="Address.Province" class="field-error"></span>
+                        </div>
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field">
+                            <label asp-for="Address.PostalCode">Postal code <span class="required" aria-hidden="true">*</span></label>
+                            <input asp-for="Address.PostalCode" type="text" placeholder="e.g. 2196" autocomplete="postal-code" />
+                            <span asp-validation-for="Address.PostalCode" class="field-error"></span>
+                        </div>
+                        <div class="field">
+                            <label asp-for="Address.Country">Country <span class="required" aria-hidden="true">*</span></label>
+                            <input asp-for="Address.Country" type="text" placeholder="e.g. South Africa" autocomplete="country-name" />
+                            <span asp-validation-for="Address.Country" class="field-error"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-section-label">Contact details</div>
+
+                    <div class="field-row">
+                        <div class="field">
+                            <label asp-for="TelephoneNumber"></label>
+                            <input asp-for="TelephoneNumber" type="tel" placeholder="e.g. 011 555 0101" autocomplete="tel" />
+                            <span asp-validation-for="TelephoneNumber" class="field-error"></span>
+                        </div>
+                        <div class="field">
+                            <label asp-for="VatNumber"></label>
+                            <input asp-for="VatNumber" type="text" placeholder="e.g. 4012345671" autocomplete="off" />
+                            <span asp-validation-for="VatNumber" class="field-error"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-section-label">Contact person</div>
+
+                    <div class="field-row">
+                        <div class="field">
+                            <label asp-for="ContactPersonName">Name</label>
+                            <input asp-for="ContactPersonName" type="text" placeholder="e.g. Thandi Mokoena" autocomplete="name" />
+                            <span asp-validation-for="ContactPersonName" class="field-error"></span>
+                        </div>
+                        <div class="field">
+                            <label asp-for="ContactPersonEmail">Email address</label>
+                            <input asp-for="ContactPersonEmail" type="email" placeholder="e.g. thandi@company.co.za" autocomplete="email" />
+                            <span asp-validation-for="ContactPersonEmail" class="field-error"></span>
+                        </div>
+                    </div>
+
+                    <p class="field-help"><span class="required">*</span> Required. The province is optional. If a contact email is given it must be a valid email address.</p>
+
+                    @if (!isNew)
+                    {
+                        <p class="audit-line">Added @Model.CreatedAt.ToString("d MMM yyyy 'at' HH:mm")</p>
+                    }
+
+                    <div class="form-actions">
+                        <a class="btn-secondary" href="@returnUrl">Cancel</a>
+                        <button type="submit" class="btn-primary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7" /></svg>
+                            @(isNew ? "Add customer" : "Save changes")
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

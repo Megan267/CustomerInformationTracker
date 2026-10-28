@@ -13,9 +13,6 @@ namespace CustomerTrackerAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddControllers();
-            builder.Services.AddOpenApi();
-
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                 {
@@ -24,8 +21,18 @@ namespace CustomerTrackerAPI
                 });
             builder.Services.AddOpenApi();
 
+            // Locally this comes from User Secrets; on Azure from the
+            // ConnectionStrings__DefaultConnection app setting (or the Connection strings tab).
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new InvalidOperationException(
+                    "ConnectionStrings:DefaultConnection is not set. Add it to User Secrets locally, " +
+                    "or as ConnectionStrings__DefaultConnection in the App Service's environment variables on Azure.");
+            }
+
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(connectionString));
 
             var app = builder.Build();
 
@@ -44,6 +51,12 @@ namespace CustomerTrackerAPI
                 {
                     return;
                 }
+            }
+            else
+            {
+                // On Azure (Production) only apply migrations that already exist in the project.
+                // New migrations are never created here.
+                ApplyMigrations(app);
             }
 
             app.UseHttpsRedirection();
@@ -82,14 +95,27 @@ namespace CustomerTrackerAPI
             return true;
         }
 
+        private static void ApplyMigrations(WebApplication app)
+        {
+            using var scope = app.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+            var pending = db.Database.GetPendingMigrations().ToList();
+            if (pending.Any())
+            {
+                app.Logger.LogInformation("Applying migrations: {Migrations}", string.Join(", ", pending));
+                db.Database.Migrate();
+            }
+        }
+
         private static void CreateMigration(ApplicationDbContext db, string name, string projectPath)
         {
             var services = new ServiceCollection()
                 .AddEntityFrameworkDesignTimeServices()
                 .AddDbContextDesignTimeServices(db);
-                #pragma warning disable EF1001
+#pragma warning disable EF1001
             new SqlServerDesignTimeServices().ConfigureDesignTimeServices(services);
-            #pragma warning restore EF1001
+#pragma warning restore EF1001
 
             var scaffolder = services.BuildServiceProvider()
                 .GetRequiredService<IMigrationsScaffolder>();

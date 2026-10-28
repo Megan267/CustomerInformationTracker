@@ -1,0 +1,30 @@
+﻿@{
+    var success = TempData["SuccessMessage"] as string;
+    var error = TempData["ErrorMessage"] as string;
+    var undoId = TempData["UndoCustomerId"] as int?;
+    var here = Context.Request.Path + Context.Request.QueryString;
+}
+@if (!string.IsNullOrEmpty(success))
+{
+    <div class="notice notice-success" role="status" data-dismissible>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="m8.5 12 2.5 2.5 4.5-5" /></svg>
+        <span class="notice-text">@success</span>
+        @if (undoId.HasValue)
+        {
+            <form method="post" asp-controller="Customers" asp-action="Reinstate" asp-route-id="@undoId" class="inline-form">
+                <input type="hidden" name="returnUrl" value="@here" />
+                <input type="hidden" name="customerName" value="@(TempData["UndoCustomerName"] as string)" />
+                <button type="submit" class="notice-action">Undo</button>
+            </form>
+        }
+        <button type="button" class="notice-dismiss" aria-label="Dismiss message">&times;</button>
+    </div>
+}
+@if (!string.IsNullOrEmpty(error))
+{
+    <div class="notice notice-error" role="alert" data-dismissible>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 8v4M12 16h.01" /></svg>
+        <span class="notice-text">@error</span>
+        <button type="button" class="notice-dismiss" aria-label="Dismiss message">&times;</button>
+    </div>
+}
