@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="CustomerTrackerAPI/CustomerTrackerAPI.csproj" />
+  <Project Path="CustomerTrackerMVC/CustomerTrackerMVC.csproj" />
+</Solution>
