@@ -35,7 +35,21 @@ The app is hosted on Azure App Service (South Africa North):
 
 > [!TIP]
 > To run it locally instead, start both projects (`CustomerTrackerAPI` and `CustomerTrackerMVC`) in Visual Studio.
-> In Development the API uses LocalDB from `appsettings.Development.json` and creates the database on first run.
+> Before the first run, point the API at your SQL Server. Use the **Server name** you connect to in SQL Server
+> Management Studio (SSMS), for example `localhost`, `.\SQLEXPRESS` or `YOUR-PC\SQLEXPRESS`. Right-click
+> `CustomerTrackerAPI` > *Manage User Secrets* and add:
+> ```json
+> {
+>   "ConnectionStrings": {
+>     "DefaultConnection": "Server=localhost;Database=CustomerTracker;Trusted_Connection=True;TrustServerCertificate=True"
+>   }
+> }
+> ```
+> Replace `localhost` with your SSMS server name (in JSON, write a backslash as `\\`, e.g. `.\\SQLEXPRESS`).
+> If you sign in to SSMS with SQL Server Authentication, use `User ID=<user>;Password=<password>;` instead of
+> `Trusted_Connection=True;`. You don't need to create the database in SSMS first.
+> In Development the API then migrates automatically: if the model has changed it creates a new migration and stops
+> (rebuild and run again), otherwise it applies any pending migrations, creating the database on first run.
 
 ## How the requirements are met
 
