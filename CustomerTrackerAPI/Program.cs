@@ -23,8 +23,6 @@ namespace CustomerTrackerAPI
                 });
             builder.Services.AddOpenApi();
 
-            // Locally this comes from User Secrets; on Azure from the
-            // ConnectionStrings__DefaultConnection app setting (or the Connection strings tab).
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             if (string.IsNullOrWhiteSpace(connectionString))
             {
