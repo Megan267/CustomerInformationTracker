@@ -21,6 +21,7 @@ namespace CustomerTrackerAPI.Controllers
             _context = context;
         }
 
+        // Retrieves customers with filtering, sorting, and pagination.
         [HttpGet]
         public async Task<ActionResult<PagedResponse<CustomerResponse>>> GetCustomers([FromQuery] CustomerQuery query)
         {
@@ -69,6 +70,7 @@ namespace CustomerTrackerAPI.Controllers
                 totalPages));
         }
 
+        // Retrieves a customer by ID.
         [HttpGet("{id:int}")]
         public async Task<ActionResult<CustomerResponse>> GetCustomer(int id)
         {
@@ -85,6 +87,7 @@ namespace CustomerTrackerAPI.Controllers
             return Ok(customer.ToResponse());
         }
 
+        // Creates a new customer.
         [HttpPost]
         public async Task<ActionResult<CustomerResponse>> CreateCustomer([FromBody] CustomerRequest request)
         {
@@ -96,6 +99,7 @@ namespace CustomerTrackerAPI.Controllers
             return CreatedAtAction(nameof(GetCustomer), new { id = customer.CustomerId }, customer.ToResponse());
         }
 
+        // Updates an existing customer.
         [HttpPut("{id:int}")]
         public async Task<ActionResult<CustomerResponse>> UpdateCustomer(int id, [FromBody] CustomerRequest request)
         {
@@ -114,6 +118,7 @@ namespace CustomerTrackerAPI.Controllers
             return Ok(customer.ToResponse());
         }
 
+        // Soft-deletes a customer by marking them inactive.
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteCustomer(int id)
         {
@@ -129,6 +134,7 @@ namespace CustomerTrackerAPI.Controllers
             return NoContent();
         }
 
+        // Reinstates an inactive customer.
         [HttpPost("{id:int}/reinstate")]
         public async Task<IActionResult> ReinstateCustomer(int id)
         {
@@ -147,6 +153,7 @@ namespace CustomerTrackerAPI.Controllers
             return NoContent();
         }
 
+        // Sorts customers by the requested field and direction.
         private static IQueryable<Customer> ApplySort(IQueryable<Customer> customers, string? sortBy, string? sortDir)
         {
             bool desc = string.Equals(sortDir, "desc", StringComparison.OrdinalIgnoreCase);
@@ -172,12 +179,14 @@ namespace CustomerTrackerAPI.Controllers
             return sorted.ThenBy(c => c.CustomerId);
         }
 
+        // Applies ascending or descending sorting to a field.
         private static IOrderedQueryable<Customer> By<TKey>(
             IQueryable<Customer> customers, Expression<Func<Customer, TKey>> key, bool desc)
         {
             return desc ? customers.OrderByDescending(key) : customers.OrderBy(key);
         }
 
+        // Sorts customers while keeping null values last.
         private static IOrderedQueryable<Customer> NullsLast(
             IQueryable<Customer> customers, Expression<Func<Customer, string?>> key, bool desc)
         {

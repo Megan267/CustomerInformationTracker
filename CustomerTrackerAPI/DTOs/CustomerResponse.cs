@@ -1,6 +1,5 @@
 ﻿namespace CustomerTrackerAPI.DTOs
 {
-    /// <summary>What the API sends back for a customer.</summary>
     public record CustomerResponse(
         int CustomerId,
         string Name,

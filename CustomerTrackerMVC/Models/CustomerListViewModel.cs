@@ -14,6 +14,6 @@ namespace CustomerTrackerMVC.Models
 
         public string CountText =>
             $"{Result.TotalCount} {(Query.Status == CustomerStatusFilter.Inactive ? "inactive " : "")}" +
-            $"{(Result.TotalCount == 1 ? "customer" : "customers")}{(Query.HasSearch ? " match" : "")}";
+            $"{(Result.TotalCount == 1 ? "customer" : "customers")}{(Query.HasSearch ? (Result.TotalCount == 1 ? " matches" : " match") : "")}";
     }
 }

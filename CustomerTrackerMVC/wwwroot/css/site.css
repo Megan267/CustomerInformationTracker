@@ -16,7 +16,7 @@
     --accent: #38b6ff;
     --accent-hover: #2a9ee0;
     --accent-soft: #8ecdfb;
-    --violet: #0066cc;
+    --accent-deep: #0066cc;
     --green: #34d399;
     --critical: #f97362;
     --warn: #f2795c;
@@ -146,7 +146,7 @@ code {
         right: 0;
         bottom: 0;
         width: 2px;
-        background: linear-gradient(180deg, var(--accent), var(--violet), var(--green), var(--accent));
+        background: linear-gradient(180deg, var(--accent), var(--accent-deep), var(--green), var(--accent));
         background-size: 100% 300%;
         animation: glow-slide 6s linear infinite;
         box-shadow: 0 0 12px rgba(124, 108, 240, 0.55), 0 0 4px rgba(56, 182, 255, 0.6);
@@ -508,7 +508,6 @@ code {
         color: var(--accent-soft);
     }
 
-    /* Delete stays neutral until hovered, so a full page isn't a wall of red buttons. */
     .icon-btn.icon-btn-warn:hover,
     .icon-btn.icon-btn-warn:focus-visible {
         border-color: var(--warn);

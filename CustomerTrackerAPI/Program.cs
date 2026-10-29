@@ -46,7 +46,6 @@ namespace CustomerTrackerAPI
                     options.RoutePrefix = "swagger";
                 });
 
-                // stop here if a new migration was just created, it needs a rebuild first
                 if (!SetupDatabase(app))
                 {
                     return;
@@ -55,7 +54,7 @@ namespace CustomerTrackerAPI
             else
             {
                 // On Azure (Production) only apply migrations that already exist in the project.
-                // New migrations are never created here.
+                // New migrations are never created here. This is for the demo only -> a production database would not be seeded.
                 ApplyMigrations(app);
             }
 

@@ -38,12 +38,6 @@ namespace CustomerTrackerAPI.Data
             SeedCustomers(modelBuilder);
         }
 
-        /// <summary>
-        /// Sample customers that are inserted by the SeedCustomers migration.
-        /// Seed data needs fixed IDs and a fixed CreatedAt date (not DateTime.Now),
-        /// otherwise EF thinks the model has changed every time the app starts.
-        /// If you change anything here, add a new migration so the database is updated.
-        /// </summary>
         private static void SeedCustomers(ModelBuilder modelBuilder)
         {
             var seededAt = new DateTime(2026, 10, 28, 9, 0, 0);

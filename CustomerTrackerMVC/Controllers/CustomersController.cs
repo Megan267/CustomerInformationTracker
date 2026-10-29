@@ -14,6 +14,7 @@ namespace CustomerTrackerMVC.Controllers
             _httpClientFactory = httpClientFactory;
         }
 
+        // Displays customers with filtering, sorting, and pagination.
         [HttpGet]
         public async Task<IActionResult> Index(CustomerListQuery query)
         {
@@ -51,6 +52,7 @@ namespace CustomerTrackerMVC.Controllers
             return View(model);
         }
 
+        // Displays the form for creating or editing a customer.
         [HttpGet]
         public async Task<IActionResult> Manage(int? id, string? returnUrl)
         {
@@ -83,6 +85,7 @@ namespace CustomerTrackerMVC.Controllers
             return View(customer);
         }
 
+        // Creates or updates a customer using the API.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Manage(Customer customer, string? returnUrl)
@@ -163,6 +166,7 @@ namespace CustomerTrackerMVC.Controllers
             return View(customer);
         }
 
+        // Deletes a customer after confirmation.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id, string? customerName, string? returnUrl, bool confirmed = false)
@@ -198,6 +202,7 @@ namespace CustomerTrackerMVC.Controllers
             return Redirect(BackToList(returnUrl));
         }
 
+        // Displays the confirmation page before deleting a customer.
         [HttpGet]
         public async Task<IActionResult> ConfirmDelete(int id, string? returnUrl)
         {
@@ -225,6 +230,7 @@ namespace CustomerTrackerMVC.Controllers
             return View(customer);
         }
 
+        // Restores a previously deleted customer.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Reinstate(int id, string? customerName, string? returnUrl)
@@ -253,6 +259,7 @@ namespace CustomerTrackerMVC.Controllers
             return Redirect(BackToList(returnUrl));
         }
 
+        // Displays the application error page.
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
@@ -261,11 +268,13 @@ namespace CustomerTrackerMVC.Controllers
 
         private const string ApiUnavailableMessage = "The customer service could not be reached. Make sure the API is running and try again.";
 
+        // Checks whether an exception indicates an unavailable API.
         private static bool IsApiUnavailable(Exception ex)
         {
             return ex is HttpRequestException or TaskCanceledException or System.Text.Json.JsonException;
         }
 
+        // Returns a safe local URL to redirect back to the customer list.
         private string BackToList(string? returnUrl)
         {
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))

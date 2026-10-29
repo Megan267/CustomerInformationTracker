@@ -4,7 +4,6 @@
     var onList = controller == "Customers" && action == "Index";
     var onManage = controller == "Customers" && action == "Manage";
 
-    // Use South African time rather than the server clock (Azure runs on UTC).
     DateTime now;
     try
     {
@@ -12,7 +11,7 @@
     }
     catch (TimeZoneNotFoundException)
     {
-        now = DateTime.UtcNow.AddHours(2); // SAST is UTC+2 all year, with no daylight saving
+        now = DateTime.UtcNow.AddHours(2); 
     }
     var hour = now.Hour;
     var greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";

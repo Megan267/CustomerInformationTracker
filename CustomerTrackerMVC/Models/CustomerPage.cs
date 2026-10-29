@@ -1,6 +1,5 @@
 namespace CustomerTrackerMVC.Models
 {
-    /// <summary>One page of customers, as returned by GET /api/customer.</summary>
     public class CustomerPage
     {
         public List<Customer> Items { get; set; } = new();

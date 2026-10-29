@@ -43,12 +43,10 @@
             btn.addEventListener('click', function () { fadeOut(notice); });
         }
 
-        // Success messages fade on their own. Errors stay until closed.
         if (!notice.classList.contains('notice-success')) {
             return;
         }
 
-        // Give longer when there's an Undo button, and pause while the mouse or keyboard is on it.
         var delay = notice.querySelector('.notice-action') ? 10000 : 5000;
         var timer = setTimeout(function () { fadeOut(notice); }, delay);
 
@@ -79,7 +77,6 @@
             var params = new URLSearchParams();
             new FormData(filterForm).forEach(function (value, key) {
                 var text = String(value).trim();
-                // the default status is left out so the URL stays clean
                 if (text !== '' && !(key === 'status' && text === defaultStatus)) {
                     params.append(key, text);
                 }

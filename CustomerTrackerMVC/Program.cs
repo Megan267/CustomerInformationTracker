@@ -45,6 +45,12 @@ namespace CustomerTrackerMVC
                 pattern: "{controller=Customers}/{action=Index}/{id?}")
                 .WithStaticAssets();
 
+            app.MapFallback(context =>
+            {
+                context.Response.Redirect("/");
+                return Task.CompletedTask;
+            });
+
             app.Run();
         }
     }

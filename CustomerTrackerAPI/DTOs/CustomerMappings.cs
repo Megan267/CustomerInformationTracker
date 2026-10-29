@@ -3,10 +3,6 @@ using CustomerTrackerAPI.Models;
 
 namespace CustomerTrackerAPI.Mappings
 {
-    /// <summary>
-    /// Converts between entities and DTOs, so the DTOs stay plain data
-    /// and the controller doesn't build objects field by field.
-    /// </summary>
     public static class CustomerMappings
     {
         public static Customer ToEntity(this CustomerRequest request)
@@ -59,7 +55,6 @@ namespace CustomerTrackerAPI.Mappings
                 address.Country);
         }
 
-        // Blank optional fields are stored as null rather than "" or "   ".
         private static string? Clean(string? value)
         {
             return string.IsNullOrWhiteSpace(value) ? null : value.Trim();

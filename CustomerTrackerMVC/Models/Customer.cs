@@ -26,7 +26,6 @@ namespace CustomerTrackerMVC.Models
         public string? ContactPersonName { get; set; }
 
         [StringLength(100, ErrorMessage = "The email address can be at most {1} characters.")]
-        [EmailAddress(ErrorMessage = "Enter a valid email address, e.g. name@gmail.com")]
         [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
             ErrorMessage = "Enter a valid email address, e.g. name@gmail.com")]
         [Display(Name = "Contact email")]
