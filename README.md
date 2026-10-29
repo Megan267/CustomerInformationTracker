@@ -32,16 +32,20 @@ The app is hosted on Azure App Service (South Africa North):
 
 > [!IMPORTANT]
 > The connection string is not stored in the code. On Azure it is set as the `DefaultConnection` connection string on
-> the API App Service, and locally it comes from User Secrets. It has this format:
+> the API App Service. For local runs a SQL Server connection string is included in
+> `CustomerTrackerAPI/appsettings.Development.json` **only for ease of use**, so the project runs without extra setup.
+> Normally it would not be committed and would live in User Secrets instead (User Secrets override it if set).
+> The Azure connection string has this format:
 > ```
 > Server=tcp:<server>.database.windows.net,1433;Initial Catalog=<database>;User ID=<user>;Password=<password>;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
 > ```
 
 > [!TIP]
 > To run it locally instead, start both projects (`CustomerTrackerAPI` and `CustomerTrackerMVC`) in Visual Studio.
-> Before the first run, point the API at your SQL Server. Use the **Server name** you connect to in SQL Server
-> Management Studio (SSMS), for example `localhost`, `.\SQLEXPRESS` or `YOUR-PC\SQLEXPRESS`. Right-click
-> `CustomerTrackerAPI` > *Manage User Secrets* and add:
+> The API already points at `localhost` (see `appsettings.Development.json`, included only for ease of use). If your
+> SQL Server has a different **Server name** in SQL Server Management Studio (SSMS), for example `.\SQLEXPRESS` or
+> `YOUR-PC\SQLEXPRESS`, change it there, or (the usual approach) right-click `CustomerTrackerAPI` >
+> *Manage User Secrets* and add:
 > ```json
 > {
 >   "ConnectionStrings": {
