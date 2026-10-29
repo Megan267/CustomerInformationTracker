@@ -16,6 +16,10 @@ The app is hosted on Azure App Service (South Africa North):
 - **Website:** https://customertracker-f9fmh4aeesfcbzgp.southafricanorth-01.azurewebsites.net
 - **API:** https://customertrackerapi-a9ebcjeca4atbfff.southafricanorth-01.azurewebsites.net
 
+# Youtube Video
+
+[![Watch Video](https://img.youtube.com/vi/1qRuowfFA1k/maxresdefault.jpg)](https://youtu.be/1qRuowfFA1k)
+
 ## Database
 
 - The data is stored in an **Azure SQL Database**, accessed only by the API through Entity Framework Core and LINQ.
