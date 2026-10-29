@@ -32,8 +32,9 @@
                     Customer details
                 </div>
 
-                <form method="post" asp-action="Manage" novalidate>
+                <form method="post" asp-action="Manage" novalidate data-trim-inputs>
                     <input type="hidden" asp-for="CustomerId" />
+                    <input type="hidden" asp-for="CreatedAt" />
                     <input type="hidden" name="returnUrl" value="@returnUrl" />
 
                     <div asp-validation-summary="ModelOnly" class="error-list"></div>
@@ -112,7 +113,7 @@
 
                     <p class="field-help"><span class="required">*</span> Required. The province is optional. If a contact email is given it must be a valid email address.</p>
 
-                    @if (!isNew)
+                    @if (!isNew && Model.CreatedAt != default)
                     {
                         <p class="audit-line">Added @Model.CreatedAt.ToString("d MMM yyyy 'at' HH:mm")</p>
                     }

@@ -1,4 +1,5 @@
 using CustomerTrackerAPI.Data;
+using CustomerTrackerAPI.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Migrations.Design;
@@ -18,6 +19,7 @@ namespace CustomerTrackerAPI
                 {
                     options.JsonSerializerOptions.WriteIndented = true;
                     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                    options.JsonSerializerOptions.Converters.Add(new TrimStringConverter());
                 });
             builder.Services.AddOpenApi();
 

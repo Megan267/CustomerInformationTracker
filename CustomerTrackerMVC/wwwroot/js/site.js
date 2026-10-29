@@ -61,6 +61,19 @@
         notice.addEventListener('focusout', resume);
     });
 
+    document.querySelectorAll('form[data-trim-inputs]').forEach(function (form) {
+        function trimField(field) {
+            if (field.matches('input[type="text"], input[type="email"], input[type="tel"], input:not([type]), textarea')
+                && field.value !== field.value.trim()) {
+                field.value = field.value.trim();
+            }
+        }
+        form.addEventListener('change', function (e) { trimField(e.target); });
+        form.addEventListener('submit', function () {
+            form.querySelectorAll('input, textarea').forEach(trimField);
+        }, true);
+    });
+
     var filterForm = document.querySelector('form[data-live-filter]');
     if (filterForm) {
         var typingDelay = 300;

@@ -1,3 +1,4 @@
+using CustomerTrackerMVC.ModelBinding;
 using System.Text.Json.Serialization;
 
 namespace CustomerTrackerMVC
@@ -9,7 +10,10 @@ namespace CustomerTrackerMVC
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews()
+            builder.Services.AddControllersWithViews(options =>
+            {
+                options.ModelBinderProviders.Insert(0, new TrimmingModelBinderProvider());
+            })
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
